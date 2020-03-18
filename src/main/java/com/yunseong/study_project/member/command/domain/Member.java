@@ -12,6 +12,7 @@ import java.util.List;
 
 @Entity
 @Getter
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = { "username", "nickname" }))
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AttributeOverride(name = "id", column = @Column(name = "member_id"))
 public class Member extends BaseEntity {

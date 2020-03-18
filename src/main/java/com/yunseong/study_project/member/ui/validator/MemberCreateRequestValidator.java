@@ -1,6 +1,6 @@
 package com.yunseong.study_project.member.ui.validator;
 
-import com.yunseong.study_project.member.command.application.MemberCreateRequest;
+import com.yunseong.study_project.member.command.application.dto.MemberCreateRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;

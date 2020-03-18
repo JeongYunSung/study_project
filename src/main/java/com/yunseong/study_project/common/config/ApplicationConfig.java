@@ -3,15 +3,27 @@ package com.yunseong.study_project.common.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.AuditorAware;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.util.Optional;
 import java.util.UUID;
 
 @Configuration
+@EnableJpaAuditing
 public class ApplicationConfig {
 
     @Bean
     public AuditorAware auditorAware() {
-        return () -> Optional.of(UUID.randomUUID());
+        return () -> {
+            Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            if (principal instanceof User) {
+                return Optional.of(((User)principal).getUsername());
+            }
+            return Optional.of(principal);
+        };
     }
 }

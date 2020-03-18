@@ -1,4 +1,4 @@
-package com.yunseong.study_project.member.query.dto;
+package com.yunseong.study_project.member.query.application.dto;
 
 import com.yunseong.study_project.member.command.domain.Grade;
 import com.yunseong.study_project.member.command.domain.Member;
