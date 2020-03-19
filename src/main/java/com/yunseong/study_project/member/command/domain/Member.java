@@ -5,6 +5,7 @@ import com.yunseong.study_project.order.domain.Order;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -25,7 +26,7 @@ public class Member extends BaseEntity {
 
     private long money;
 
-    @OneToMany(mappedBy = "member", cascade = { CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.MERGE })
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<MyItem> myItems = new ArrayList<>();
 
     @OneToMany(mappedBy = "orderer")
@@ -62,6 +63,10 @@ public class Member extends BaseEntity {
     public void addMyItem(MyItem myItem) {
         this.getMyItems().add(myItem);
         myItem.setMember(this);
+    }
+
+    public void encode(PasswordEncoder encoder) {
+        this.password = encoder.encode(this.getPassword());
     }
 
     @Override

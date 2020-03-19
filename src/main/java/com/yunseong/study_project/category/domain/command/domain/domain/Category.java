@@ -1,4 +1,4 @@
-package com.yunseong.study_project.category.domain;
+package com.yunseong.study_project.category.domain.command.domain.domain;
 
 import com.yunseong.study_project.common.domain.BaseUserEntity;
 import lombok.AccessLevel;

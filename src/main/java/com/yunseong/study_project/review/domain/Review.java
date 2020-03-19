@@ -2,7 +2,7 @@ package com.yunseong.study_project.review.domain;
 
 import com.yunseong.study_project.common.domain.BaseUserEntity;
 import com.yunseong.study_project.member.command.domain.Member;
-import com.yunseong.study_project.product.domain.Product;
+import com.yunseong.study_project.product.command.domain.Product;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

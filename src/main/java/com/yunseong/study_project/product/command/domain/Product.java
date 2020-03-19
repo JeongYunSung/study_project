@@ -1,4 +1,4 @@
-package com.yunseong.study_project.product.domain;
+package com.yunseong.study_project.product.command.domain;
 
 import com.yunseong.study_project.common.domain.BaseUserEntity;
 import com.yunseong.study_project.review.domain.Review;
@@ -12,6 +12,7 @@ import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 @Entity
 @Getter
@@ -32,6 +33,14 @@ public class Product extends BaseUserEntity {
     private int amount;
 
     private long price;
+
+    public Product(String productName, String content, int amount, long price, List<Type> list) {
+        this.productName = productName;
+        this.content = content;
+        this.amount = amount;
+        this.price = price;
+        this.types.addAll(list);
+    }
 
     public void addType(Type type) {
         this.getTypes().add(type);

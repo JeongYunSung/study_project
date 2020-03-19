@@ -27,19 +27,19 @@ public class MemberController {
     private final MemberUpdateRequestValidator memberUpdateRequestValidator;
 
     @PostMapping
-    public ResponseEntity createMember(MemberCreateRequest memberRequest, Errors errors) {
+    public ResponseEntity createMember(@RequestBody MemberCreateRequest memberRequest, Errors errors) {
         this.memberCreateRequestValidator.validate(memberRequest, errors);
         if (errors.hasErrors()) {
             return ResponseEntity.badRequest().body(errors);
         }
         this.memberCommandService.registerMember(memberRequest);
-        URI uri = WebMvcLinkBuilder.linkTo(MemberController.class).slash("my").toUri();
+        URI uri = WebMvcLinkBuilder.linkTo(MemberMyController.class).toUri();
 
         return ResponseEntity.created(uri).body(memberRequest);
     }
 
     @PutMapping
-    public ResponseEntity updateMemberUsername(MemberUpdateRequest memberRequest, Errors errors) {
+    public ResponseEntity updateMemberUsername(@RequestBody MemberUpdateRequest memberRequest, Errors errors) {
         this.memberUpdateRequestValidator.validate(memberRequest, errors);
         if (errors.hasErrors()) {
             return ResponseEntity.badRequest().body(errors);
@@ -47,7 +47,7 @@ public class MemberController {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String username = user.getUsername();
         this.memberCommandService.updateMember(username, memberRequest);
-        URI uri = WebMvcLinkBuilder.linkTo(MemberController.class).slash("my").toUri();
+        URI uri = WebMvcLinkBuilder.linkTo(MemberMyController.class).toUri();
 
         return ResponseEntity.noContent().location(uri).build();
     }

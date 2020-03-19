@@ -10,6 +10,7 @@ import com.yunseong.study_project.member.query.application.dto.MyItemResponse;
 import com.yunseong.study_project.member.query.application.dto.model.MemberInfoResponseModel;
 import com.yunseong.study_project.member.query.application.dto.model.MyItemResponseModel;
 import com.yunseong.study_project.member.ui.validator.NoSuchMyItemException;
+import com.yunseong.study_project.product.query.application.ProductQueryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -38,6 +39,8 @@ public class MemberMyController {
     private final MemberCommandService memberCommandService;
     private final MemberQueryService memberQueryService;
 
+    private final ProductQueryService productQueryService;
+
     @ExceptionHandler(NoSuchMyItemException.class)
     public ResponseEntity handleNoSuchMyItemException(NoSuchMyItemException exception) {
         Errors errors = new BeanPropertyBindingResult("[" + exception.getUsername() + ", " + exception.getId() + "]", "[ Username, Id ]");
@@ -56,20 +59,20 @@ public class MemberMyController {
         MemberInfoResponseModel memberResponseModel = new MemberInfoResponseModel(new MemberInfoResponse(member));
 
         memberResponseModel.add(linkTo(MemberMyController.class).withSelfRel());
-        memberResponseModel.add(linkTo(MemberController.class).slash("items").withRel("myItemList"));
+        memberResponseModel.add(linkTo(MemberMyController.class).slash("items").withRel("myItemList"));
         addProfileLink(memberResponseModel);
 
         return ResponseEntity.ok(memberResponseModel);
     }
 
-    @PostMapping("/items/{id}")
-    public ResponseEntity createMyItem(@PathVariable  Long id) {
+    @PostMapping("/items")
+    public ResponseEntity createMyItem(@RequestBody  Long productId) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String username = user.getUsername();
-        this.memberCommandService.addMyItem(username, id);
-        URI uri = WebMvcLinkBuilder.linkTo(MemberMyController.class).slash("my/items").slash(id).toUri();
+        this.memberCommandService.addMyItem(username, this.productQueryService.findProductById(productId));
+        URI uri = WebMvcLinkBuilder.linkTo(MemberMyController.class).slash("items").toUri();
 
-        return ResponseEntity.created(uri).body(id);
+        return ResponseEntity.created(uri).body(productId);
     }
 
     @GetMapping("/items/{id}")
@@ -79,7 +82,7 @@ public class MemberMyController {
         MyItemResponse myItem = this.memberQueryService.findMyItem(username, id);
         MyItemResponseModel model = new MyItemResponseModel(myItem);
 
-        model.add(linkTo(MemberController.class).slash("items").withRel("myItemList"));
+        model.add(linkTo(MemberMyController.class).slash("items").withRel("myItemList"));
         addBasicLink(model);
 
         return ResponseEntity.ok(model);
@@ -93,7 +96,7 @@ public class MemberMyController {
         PagedModel.PageMetadata pageMetadata = new PagedModel.PageMetadata(page.getSize(), page.getNumber(), page.getTotalElements(), page.getTotalPages());
         PagedModel pagedModel = new PagedModel(page.getContent(), pageMetadata);
 
-        pagedModel.add(linkTo(MemberController.class).slash("items" + QueryUtil.pageableQuery(pageable)).withSelfRel());
+        pagedModel.add(linkTo(MemberMyController.class).slash("items" + QueryUtil.pageableQuery(pageable)).withSelfRel());
         addBasicLink(pagedModel);
 
         return ResponseEntity.ok(pagedModel);
