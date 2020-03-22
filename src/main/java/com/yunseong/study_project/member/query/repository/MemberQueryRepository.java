@@ -8,8 +8,8 @@ import java.util.Optional;
 
 public interface MemberQueryRepository {
 
-    Optional<MyItemResponse> findFetchMyItem(String username, Long id);
+    Optional<MyItemResponse> findMyItemResponse(String username, Long id);
 
-    Page<MyItemResponse> findFetchMyItemByPage(String username, Pageable pageable);
+    Page<MyItemResponse> findMyItemResponseByPage(String username, Pageable pageable);
 
 }

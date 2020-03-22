@@ -25,30 +25,31 @@ public class Product extends BaseUserEntity {
     @OneToMany(mappedBy = "product")
     private List<Type> types = new ArrayList<>();
 
-    @OneToMany(mappedBy = "target")
-    private List<Review> reviews = new ArrayList<>();
-
     private String content;
-
-    private int amount;
 
     private long price;
 
-    public Product(String productName, String content, int amount, long price, List<Type> list) {
+    public Product(String productName, String content, long price, List<Type> list) {
         this.productName = productName;
         this.content = content;
-        this.amount = amount;
         this.price = price;
         this.types.addAll(list);
+    }
+
+    public void changeName(String name) {
+        this.productName = name;
+    }
+
+    public void changeContent(String content) {
+        this.content = content;
+    }
+
+    public void changePrice(long price) {
+        this.price = price;
     }
 
     public void addType(Type type) {
         this.getTypes().add(type);
         type.setProduct(this);
-    }
-
-    public void addReview(Review review) {
-        this.getReviews().add(review);
-        review.setProduct(this);
     }
 }

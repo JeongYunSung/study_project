@@ -1,5 +1,6 @@
 package com.yunseong.study_project.member.command.application;
 
+import com.yunseong.study_project.common.errors.NoSuchIdentityException;
 import com.yunseong.study_project.common.errors.NoSuchUsernameException;
 import com.yunseong.study_project.member.command.application.dto.MemberCreateRequest;
 import com.yunseong.study_project.member.command.application.dto.MemberUpdateRequest;
@@ -7,6 +8,7 @@ import com.yunseong.study_project.member.command.domain.Member;
 import com.yunseong.study_project.member.command.domain.MemberRepository;
 import com.yunseong.study_project.member.command.domain.MyItem;
 import com.yunseong.study_project.product.command.domain.Product;
+import com.yunseong.study_project.product.command.domain.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -18,7 +20,10 @@ import org.springframework.transaction.annotation.Transactional;
 public class MemberCommandService {
 
     private final PasswordEncoder passwordEncoder;
+
     private final MemberRepository memberRepository;
+
+    private final ProductRepository productRepository;
 
     public Long registerMember(MemberCreateRequest memberRequest) {
         Member entity = new Member(memberRequest.getUsername(), memberRequest.getPassword(), memberRequest.getNickname());
@@ -37,8 +42,8 @@ public class MemberCommandService {
         getMember(username).delete();
     }
 
-    public Long addMyItem(String username, Product product) {
-        MyItem myItem = new MyItem(product);
+    public Long addMyItem(String username, Long productId) {
+        MyItem myItem = new MyItem(this.productRepository.findById(productId).orElseThrow(() -> new NoSuchIdentityException("product", productId)));
         getMember(username).addMyItem(myItem);
         return myItem.getId();
     }

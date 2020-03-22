@@ -1,7 +1,7 @@
 package com.yunseong.study_project.member.ui;
 
 import com.yunseong.study_project.common.ui.RestDocsController;
-import com.yunseong.study_project.common.util.QueryUtil;
+import com.yunseong.study_project.common.util.Util;
 import com.yunseong.study_project.member.command.application.MemberCommandService;
 import com.yunseong.study_project.member.command.domain.Member;
 import com.yunseong.study_project.member.query.application.MemberQueryService;
@@ -39,8 +39,6 @@ public class MemberMyController {
     private final MemberCommandService memberCommandService;
     private final MemberQueryService memberQueryService;
 
-    private final ProductQueryService productQueryService;
-
     @ExceptionHandler(NoSuchMyItemException.class)
     public ResponseEntity handleNoSuchMyItemException(NoSuchMyItemException exception) {
         Errors errors = new BeanPropertyBindingResult("[" + exception.getUsername() + ", " + exception.getId() + "]", "[ Username, Id ]");
@@ -69,7 +67,7 @@ public class MemberMyController {
     public ResponseEntity createMyItem(@RequestBody  Long productId) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String username = user.getUsername();
-        this.memberCommandService.addMyItem(username, this.productQueryService.findProductById(productId));
+        this.memberCommandService.addMyItem(username, productId);
         URI uri = WebMvcLinkBuilder.linkTo(MemberMyController.class).slash("items").toUri();
 
         return ResponseEntity.created(uri).body(productId);
@@ -82,6 +80,7 @@ public class MemberMyController {
         MyItemResponse myItem = this.memberQueryService.findMyItem(username, id);
         MyItemResponseModel model = new MyItemResponseModel(myItem);
 
+        model.add(linkTo(methodOn(MemberMyController.class).findMyItem(id)).withSelfRel());
         model.add(linkTo(MemberMyController.class).slash("items").withRel("myItemList"));
         addBasicLink(model);
 
@@ -92,11 +91,13 @@ public class MemberMyController {
     public ResponseEntity findMyItems(@PageableDefault Pageable pageable) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String username = user.getUsername();
-        Page<MyItemResponse> page = this.memberQueryService.findMemberItemByPage(username, pageable);
+        Page<MyItemResponseModel> page = this.memberQueryService.findMemberItemByPage(username, pageable).map(MyItemResponseModel::new);
+
+        page.stream().forEach(model -> linkTo(methodOn(MemberMyController.class).findMyItem(model.getMyItemResponse().getId())).withRel("myItem"));
         PagedModel.PageMetadata pageMetadata = new PagedModel.PageMetadata(page.getSize(), page.getNumber(), page.getTotalElements(), page.getTotalPages());
         PagedModel pagedModel = new PagedModel(page.getContent(), pageMetadata);
 
-        pagedModel.add(linkTo(MemberMyController.class).slash("items" + QueryUtil.pageableQuery(pageable)).withSelfRel());
+        pagedModel.add(linkTo(MemberMyController.class).slash("items" + Util.pageableQuery(pageable)).withSelfRel());
         addBasicLink(pagedModel);
 
         return ResponseEntity.ok(pagedModel);
@@ -108,6 +109,6 @@ public class MemberMyController {
     }
 
     private void addProfileLink(RepresentationModel model) {
-        model.add(linkTo(RestDocsController.class).slash("members").withRel("profile"));
+        model.add(linkTo(methodOn(RestDocsController.class).memberDocs()).withRel("profile"));
     }
 }

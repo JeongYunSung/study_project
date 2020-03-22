@@ -12,4 +12,14 @@ public class RestDocsController {
     public String memberDocs() {
         return null;
     }
+
+    @GetMapping("/categories")
+    public String categoryDocs() {
+        return null;
+    }
+
+    @GetMapping("/products")
+    public String productDocs() {
+        return null;
+    }
 }

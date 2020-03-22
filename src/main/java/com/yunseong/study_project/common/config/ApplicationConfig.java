@@ -1,14 +1,16 @@
 package com.yunseong.study_project.common.config;
 
+import com.yunseong.study_project.common.domain.CustomUser;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 
 import java.util.Optional;
 
+@Profile(value = { "dev" })
 @Configuration
 @EnableJpaAuditing
 public class ApplicationConfig {
@@ -17,10 +19,12 @@ public class ApplicationConfig {
     public AuditorAware auditorAware() {
         return () -> {
             Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            if (principal instanceof User) {
-                return Optional.of(((User)principal).getUsername());
+            System.out.println(principal);
+            if (principal instanceof CustomUser) {
+                CustomUser user = (CustomUser) principal;
+                return Optional.of(user.getId());
             }
-            return Optional.of(principal);
+            return Optional.of(0L);
         };
     }
 }

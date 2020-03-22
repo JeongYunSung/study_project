@@ -60,6 +60,10 @@ public class Member extends BaseEntity {
         return this.getGrade() != nextGrade;
     }
 
+    public void setGrade(Grade grade) {
+        this.grade = grade;
+    }
+
     public void addMyItem(MyItem myItem) {
         this.getMyItems().add(myItem);
         myItem.setMember(this);

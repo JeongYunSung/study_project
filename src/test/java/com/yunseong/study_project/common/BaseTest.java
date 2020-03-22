@@ -4,22 +4,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yunseong.study_project.member.command.application.MemberCommandService;
 import com.yunseong.study_project.member.command.application.dto.MemberCreateRequest;
 import com.yunseong.study_project.member.command.domain.Member;
-import org.aspectj.lang.annotation.Before;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
+import com.yunseong.study_project.member.query.application.MemberQueryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
-import org.springframework.security.core.authority.AuthorityUtils;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.common.util.Jackson2JsonParser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-
-import java.util.UUID;
 
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
@@ -29,7 +22,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 @AutoConfigureRestDocs
-@Import(RestDocsConfig.class)
+@Import(value = { RestDocsConfig.class, TestConfig.class })
 public class BaseTest {
 
     @Autowired
@@ -39,21 +32,24 @@ public class BaseTest {
 
     @Autowired
     private MemberCommandService memberCommandService;
+    @Autowired
+    protected MemberQueryService memberQueryService;
 
-    private final String username = "testID";
+    protected final String username = "testID";
     private final String password = "testPW";
 
-    @BeforeEach
+/*    @BeforeEach
     public void setUp() {
         SecurityContextHolder.getContext().setAuthentication(new AnonymousAuthenticationToken(UUID.randomUUID().toString(), "anonymousUser", AuthorityUtils.createAuthorityList("ROLE_ANONYMOUS")));
+    }*/
+
+    protected String getBearerToken() throws Exception {
+        String bearerToken = getAccessToken();
+        return "Bearer " + bearerToken;
     }
 
-    protected String getBearerToken(boolean account) throws Exception {
-        return "Bearer " + getAccessToken(account);
-    }
-
-    private String getAccessToken(boolean account) throws Exception {
-        if (account) registerMember();
+    private String getAccessToken() throws Exception {
+        registerMember();
         ResultActions result = this.mockMvc.perform(post("/oauth/token")
                 .with(httpBasic("jys-client", "jys-password"))
                 .param("username", this.username)
@@ -63,12 +59,15 @@ public class BaseTest {
                 .andExpect(jsonPath("access_token").exists());
 
         String contentAsString = result.andReturn().getResponse().getContentAsString();
-        Jackson2JsonParser jsonParser = new Jackson2JsonParser();
-        return jsonParser.parseMap(contentAsString).get("access_token").toString();
+        return new Jackson2JsonParser().parseMap(contentAsString).get("access_token").toString();
     }
 
     private void registerMember() {
-        Member member = new Member(this.username, this.password, "testName");
-        this.memberCommandService.registerMember(new MemberCreateRequest(member.getUsername(), member.getNickname(), member.getPassword()));
+        try {
+            this.memberQueryService.findMemberByUsername(this.username);
+        } catch (Exception e) {
+            Member member = new Member(this.username, this.password, "testName");
+            this.memberCommandService.registerMember(new MemberCreateRequest(member.getUsername(), member.getNickname(), member.getPassword()));
+        }
     }
 }

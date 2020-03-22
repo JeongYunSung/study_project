@@ -15,10 +15,10 @@ import javax.persistence.MappedSuperclass;
 public abstract class BaseUserEntity extends BaseEntity {
 
     @CreatedBy
-    @Column(nullable = false, insertable = false)
-    private String creatdBy;
+    @Column(nullable = false, updatable = false)
+    private Long creatdBy;
 
     @LastModifiedBy
     @Column(nullable = false)
-    private String updatedBy;
+    private Long updatedBy;
 }

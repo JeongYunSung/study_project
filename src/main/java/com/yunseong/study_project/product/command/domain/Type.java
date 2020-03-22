@@ -1,6 +1,6 @@
 package com.yunseong.study_project.product.command.domain;
 
-import com.yunseong.study_project.category.domain.command.domain.domain.Category;
+import com.yunseong.study_project.category.command.domain.Category;
 import com.yunseong.study_project.common.domain.BaseUserEntity;
 import lombok.AccessLevel;
 import lombok.Getter;

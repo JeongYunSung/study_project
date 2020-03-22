@@ -1,9 +1,10 @@
-package com.yunseong.study_project.category.domain.command.domain.domain;
+package com.yunseong.study_project.category.command.domain;
 
 import com.yunseong.study_project.common.domain.BaseUserEntity;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -29,7 +30,14 @@ public class Category extends BaseUserEntity {
     }
 
     public void addSubCategory(Category category) {
+        if (category.getParent() != null) {
+            category.getParent().getChildList().remove(category);
+        }
         this.getChildList().add(category);
-        this.parent = this;
+        category.parent = this;
+    }
+
+    public void changeCategoryName(String categoryName) {
+        this.categoryName = categoryName;
     }
 }

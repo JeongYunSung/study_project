@@ -7,11 +7,10 @@ import java.util.List;
 
 @Getter
 @AllArgsConstructor
-public class ProductCreateRequest {
+public class ProductRequest {
 
     private String productName;
     private String content;
     private List<Long> categoryIdList;
-    private int amount;
     private long price;
 }

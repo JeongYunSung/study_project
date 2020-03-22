@@ -1,22 +1,11 @@
 package com.yunseong.study_project.member.ui;
 
-import com.yunseong.study_project.category.domain.command.domain.application.CategoryCommandService;
-import com.yunseong.study_project.category.domain.query.CategoryQueryService;
 import com.yunseong.study_project.common.BaseTest;
-import com.yunseong.study_project.member.command.domain.MyItem;
-import com.yunseong.study_project.member.query.application.MemberQueryService;
-import com.yunseong.study_project.product.command.application.ProductCommendService;
-import com.yunseong.study_project.product.command.application.dto.ProductCreateRequest;
-import com.yunseong.study_project.product.query.application.ProductQueryService;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.HttpHeaders;
 import org.springframework.restdocs.payload.JsonFieldType;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.web.servlet.ResultActions;
-
-import java.util.Arrays;
 
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
@@ -34,7 +23,7 @@ class MemberMyControllerTest extends BaseTest {
     @Test
     public void findMemberTest() throws Exception {
         //given
-        String bearerToken = this.getBearerToken(true);
+        String bearerToken = this.getBearerToken();
         //when
         ResultActions perform = this.mockMvc.perform(get("/api/members/my")
                 .header(HttpHeaders.AUTHORIZATION, bearerToken)
@@ -68,7 +57,7 @@ class MemberMyControllerTest extends BaseTest {
     @Test
     public void createMyItemTest() throws Exception {
         //given
-        String bearerToken = this.getBearerToken(true);
+        String bearerToken = this.getBearerToken();
         //when
         ResultActions perform = this.mockMvc.perform(get("/api/members/my")
                 .header(HttpHeaders.AUTHORIZATION, bearerToken)

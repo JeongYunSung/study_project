@@ -10,16 +10,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 
 import javax.persistence.EntityManager;
-
 import java.util.List;
 import java.util.Optional;
 
-import static com.yunseong.study_project.member.command.domain.QMember.*;
-import static com.yunseong.study_project.member.command.domain.QMyItem.*;
-import static org.springframework.util.StringUtils.*;
+import static com.yunseong.study_project.member.command.domain.QMember.member;
+import static com.yunseong.study_project.member.command.domain.QMyItem.myItem;
+import static org.springframework.util.StringUtils.hasText;
 
 @Repository
 @Transactional(readOnly = true)
@@ -33,7 +31,7 @@ public class MemberRepositoryImpl implements MemberQueryRepository {
         this.queryFactory = new JPAQueryFactory(entityManager);
     }
 
-    public Optional<MyItemResponse> findFetchMyItem(String username, Long id) {
+    public Optional<MyItemResponse> findMyItemResponse(String username, Long id) {
         MyItemResponse myItemResponse = this.queryFactory
                 .select(new QMyItemResponse(myItem))
                 .from(myItem)
@@ -43,7 +41,7 @@ public class MemberRepositoryImpl implements MemberQueryRepository {
         return Optional.of(myItemResponse);
     }
 
-    public Page<MyItemResponse> findFetchMyItemByPage(String username, Pageable pageable) {
+    public Page<MyItemResponse> findMyItemResponseByPage(String username, Pageable pageable) {
         List<MyItemResponse> results = this.queryFactory
                 .select(new QMyItemResponse(myItem))
                 .from(member)

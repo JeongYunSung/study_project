@@ -22,7 +22,6 @@ public class MyItemResponse {
     private String productName;
     private long productPrice;
     private LocalDateTime buyTime;
-    private Link link;
 
     @QueryProjection
     public MyItemResponse(MyItem myItem) {
@@ -33,6 +32,5 @@ public class MyItemResponse {
         this.productName = myItem.getProduct().getProductName();
         this.productPrice = myItem.getProduct().getPrice();
         this.buyTime = myItem.getCreatedTime();
-        this.link = linkTo(methodOn(MemberMyController.class).findMyItem(id)).withSelfRel();
     }
 }
