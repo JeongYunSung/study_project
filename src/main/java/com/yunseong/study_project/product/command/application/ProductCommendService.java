@@ -3,7 +3,6 @@ package com.yunseong.study_project.product.command.application;
 import com.yunseong.study_project.category.command.domain.Category;
 import com.yunseong.study_project.category.command.domain.CategoryRepository;
 import com.yunseong.study_project.common.errors.NoSuchIdentityException;
-import com.yunseong.study_project.product.command.application.dto.ProductRequest;
 import com.yunseong.study_project.product.command.domain.Product;
 import com.yunseong.study_project.product.command.domain.ProductRepository;
 import com.yunseong.study_project.product.command.domain.Type;

@@ -21,6 +21,7 @@ public class ResourceServer extends ResourceServerConfigurerAdapter {
     @Override
     public void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
+                .mvcMatchers(HttpMethod.GET, "/").anonymous()
                 .mvcMatchers(HttpMethod.POST, "/api/members").anonymous()
                 .mvcMatchers("/admin/**").hasAnyRole(Grade.MANAGER.getTag(), Grade.ADMIN.getTag())
                 .anyRequest().authenticated()

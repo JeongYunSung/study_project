@@ -19,8 +19,7 @@ import static org.springframework.restdocs.headers.HeaderDocumentation.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -172,6 +171,7 @@ class CategoryControllerTest extends BaseTest {
                                 fieldWithPath("_links.parent.href").type(JsonFieldType.STRING).optional().description("부모 링크"),
                                 fieldWithPath("_links.child.href").type(JsonFieldType.STRING).optional().description("자식 링크"),
                                 fieldWithPath("_links.profile.href").type(JsonFieldType.STRING).description("관련 문서"),
+                                fieldWithPath("createId").type(JsonFieldType.STRING).optional().description("카테고리 소유자"),
                                 fieldWithPath("id").type(JsonFieldType.NUMBER).description("현재 카테고리 고유번호"),
                                 fieldWithPath("categoryName").type(JsonFieldType.STRING).description("현재 카테고리 이름"),
                                 fieldWithPath("parentId").type(JsonFieldType.NUMBER).optional().description("부모 카테고리 고유번호"),
@@ -195,6 +195,26 @@ class CategoryControllerTest extends BaseTest {
         //then
         perform
                 .andDo(print())
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andDo(document("select-categories",
+                        requestHeaders(
+                                headerWithName(HttpHeaders.AUTHORIZATION).description("Bearer"),
+                                headerWithName(HttpHeaders.ACCEPT).description("Accept")
+                        ),
+                        requestParameters(
+                                parameterWithName("size").optional().description("페이지 크기"),
+                                parameterWithName("page").optional().description("현재 페이지"),
+                                parameterWithName("sort").optional().description("정렬방식")
+                        ),
+                        responseFields(
+                                subsectionWithPath("_embedded.categoryResponseList").description("각 카테고리 항목"),
+                                fieldWithPath("_links.self.href").type(JsonFieldType.STRING).description("현재 링크"),
+                                fieldWithPath("_links.profile.href").type(JsonFieldType.STRING).description("관련 문서"),
+                                fieldWithPath("page.size").type(JsonFieldType.NUMBER).description("페이지 크기"),
+                                fieldWithPath("page.totalElements").type(JsonFieldType.NUMBER).description("총 요소개수"),
+                                fieldWithPath("page.totalPages").type(JsonFieldType.NUMBER).description("총 페이지개수"),
+                                fieldWithPath("page.number").type(JsonFieldType.NUMBER).description("현재 페이지번호")
+                        )
+                ));
     }
 }

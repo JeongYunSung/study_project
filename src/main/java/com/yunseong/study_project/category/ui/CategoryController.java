@@ -6,13 +6,13 @@ import com.yunseong.study_project.category.query.CategoryQueryService;
 import com.yunseong.study_project.category.query.CategoryResponse;
 import com.yunseong.study_project.category.query.model.CategoryResponseModel;
 import com.yunseong.study_project.category.ui.validator.ParentUpdateValidator;
-import com.yunseong.study_project.common.ui.RestDocsController;
 import com.yunseong.study_project.common.util.Util;
 import com.yunseong.study_project.member.query.application.MemberQueryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.hateoas.Link;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.hateoas.RepresentationModel;
@@ -24,7 +24,6 @@ import org.springframework.web.bind.annotation.*;
 import java.net.URI;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @RequiredArgsConstructor
@@ -76,7 +75,7 @@ public class CategoryController {
         CategoryResponseModel responseModel = new CategoryResponseModel(this.categoryQueryService.findCategoryResponseById(id));
         responseModel.add(linkTo(CategoryController.class).withRel("categories"));
         addBasicLink(responseModel.getContent(), responseModel);
-        responseModel.add(linkTo(methodOn(RestDocsController.class).categoryDocs()).withRel("profile"));
+        responseModel.add(new Link(Util.profileURL).withRel("profile").withRel("profile"));
 
         return ResponseEntity.ok(responseModel);
     }
@@ -89,7 +88,7 @@ public class CategoryController {
         PagedModel model = new PagedModel(page.getContent(), metadata);
 
         model.add(linkTo(CategoryController.class).slash("list" + Util.pageableQuery(pageable)).withSelfRel());
-        model.add(linkTo(methodOn(RestDocsController.class).categoryDocs()).withRel("profile"));
+        model.add(new Link(Util.profileURL).withRel("profile").withRel("profile"));
 
         return ResponseEntity.ok(model);
     }
@@ -97,6 +96,7 @@ public class CategoryController {
     private void addBasicLink(CategoryResponse category, RepresentationModel model) {
         if(category.getParentId() != null)
             model.add(linkTo(CategoryController.class).slash(category.getParentId()).withRel("parent"));
+
         model.add(linkTo(CategoryController.class).slash(category.getId()).withSelfRel());
         category.getChildName().stream().forEach(child -> model.add(linkTo(CategoryController.class).slash(child).withRel("child")));
     }

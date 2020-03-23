@@ -1,4 +1,4 @@
-package com.yunseong.study_project.product.command.application.dto;
+package com.yunseong.study_project.product.command.application;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

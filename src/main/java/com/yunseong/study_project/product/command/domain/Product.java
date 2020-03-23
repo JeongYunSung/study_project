@@ -6,10 +6,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.AttributeOverride;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
@@ -22,7 +19,7 @@ public class Product extends BaseUserEntity {
 
     private String productName;
 
-    @OneToMany(mappedBy = "product")
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     private List<Type> types = new ArrayList<>();
 
     private String content;
@@ -33,7 +30,7 @@ public class Product extends BaseUserEntity {
         this.productName = productName;
         this.content = content;
         this.price = price;
-        this.types.addAll(list);
+        list.forEach(this::addType);
     }
 
     public void changeName(String name) {

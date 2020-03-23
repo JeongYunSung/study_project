@@ -19,7 +19,7 @@ public class ParentUpdateValidator implements Validator {
         if (request.getParentId() <= 0) {
             errors.rejectValue("parentId", "required", "ParentId is required");
         }
-        if (request.getChildId() <= 0) {
+        if (request.getMyId() <= 0) {
             errors.rejectValue("childId", "required", "ChildId is required");
         }
     }

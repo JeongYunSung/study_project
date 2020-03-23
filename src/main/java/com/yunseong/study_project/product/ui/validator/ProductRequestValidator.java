@@ -1,6 +1,6 @@
 package com.yunseong.study_project.product.ui.validator;
 
-import com.yunseong.study_project.product.command.application.dto.ProductRequest;
+import com.yunseong.study_project.product.command.application.ProductRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
@@ -23,7 +23,7 @@ public class ProductRequestValidator implements Validator {
         if (!StringUtils.hasText(request.getContent())) {
             errors.rejectValue("content", "required", "Content is required");
         }
-        if (request.getPrice() > -1) {
+        if (request.getPrice() < 0) {
             errors.rejectValue("price", "wrongValue", "Price can't be negative");
         }
         if (request.getCategoryIdList() == null || request.getCategoryIdList().size() == 0) {

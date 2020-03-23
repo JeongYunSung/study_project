@@ -1,6 +1,5 @@
 package com.yunseong.study_project.category.infra.repository;
 
-import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.yunseong.study_project.category.command.domain.QCategory;
 import com.yunseong.study_project.category.query.CategoryQueryRepository;
@@ -12,10 +11,9 @@ import org.springframework.data.repository.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
-
 import java.util.List;
 
-import static com.yunseong.study_project.category.command.domain.QCategory.*;
+import static com.yunseong.study_project.category.command.domain.QCategory.category;
 
 @Repository
 public class CategoryRepositoryImpl implements CategoryQueryRepository {

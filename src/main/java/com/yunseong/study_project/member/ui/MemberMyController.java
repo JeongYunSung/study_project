@@ -1,6 +1,5 @@
 package com.yunseong.study_project.member.ui;
 
-import com.yunseong.study_project.common.ui.RestDocsController;
 import com.yunseong.study_project.common.util.Util;
 import com.yunseong.study_project.member.command.application.MemberCommandService;
 import com.yunseong.study_project.member.command.domain.Member;
@@ -10,11 +9,11 @@ import com.yunseong.study_project.member.query.application.dto.MyItemResponse;
 import com.yunseong.study_project.member.query.application.dto.model.MemberInfoResponseModel;
 import com.yunseong.study_project.member.query.application.dto.model.MyItemResponseModel;
 import com.yunseong.study_project.member.ui.validator.NoSuchMyItemException;
-import com.yunseong.study_project.product.query.application.ProductQueryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.hateoas.Link;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.hateoas.RepresentationModel;
@@ -91,9 +90,9 @@ public class MemberMyController {
     public ResponseEntity findMyItems(@PageableDefault Pageable pageable) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String username = user.getUsername();
-        Page<MyItemResponseModel> page = this.memberQueryService.findMemberItemByPage(username, pageable).map(MyItemResponseModel::new);
+        Page<MyItemResponseModel> page = this.memberQueryService.findMemberItemByPage(username, pageable).map(response -> new MyItemResponseModel(response,
+                linkTo(methodOn(MemberMyController.class).findMyItem(response.getId())).withRel("myItem")));
 
-        page.stream().forEach(model -> linkTo(methodOn(MemberMyController.class).findMyItem(model.getMyItemResponse().getId())).withRel("myItem"));
         PagedModel.PageMetadata pageMetadata = new PagedModel.PageMetadata(page.getSize(), page.getNumber(), page.getTotalElements(), page.getTotalPages());
         PagedModel pagedModel = new PagedModel(page.getContent(), pageMetadata);
 
@@ -109,6 +108,6 @@ public class MemberMyController {
     }
 
     private void addProfileLink(RepresentationModel model) {
-        model.add(linkTo(methodOn(RestDocsController.class).memberDocs()).withRel("profile"));
+        model.add(new Link(Util.profileURL).withRel("profile").withRel("profile"));
     }
 }

@@ -9,6 +9,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 public class Util {
 
+    public static final String profileURL = "http://localhost:8080/api/docs";
+
     public static boolean isMemberEqOwner(Long id, MemberRepository memberRepository) {
         Long memberId = ((CustomUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId();
         Member member = memberRepository.findById(memberId).get();
